@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inpatient GI — Clinical Reference</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0e14;
+    --surface: #111822;
+    --surface2: #18222e;
+    --border: #1e2d3d;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --accent3: #39d353;
+    --accent4: #f0c040;
+    --text: #c9d1d9;
+    --text-dim: #6a7d90;
+    --text-bright: #e6edf3;
+    --red: #ff4757;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    background: var(--accent);
+    color: var(--bg);
+    padding: 2px 8px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+  .header-title {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--text-bright);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .header-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-left: auto;
+    font-family: var(--mono);
+  }
+
+  .nav {
+    display: flex;
+    gap: 4px;
+    padding: 12px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-pill {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    white-space: nowrap;
+    letter-spacing: 0.06em;
+    transition: all 0.15s;
+    font-weight: 600;
+  }
+  .nav-pill:hover { border-color: var(--accent); color: var(--accent); }
+  .nav-pill.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+  .main { padding: 24px; max-width: 1100px; margin: 0 auto; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .accordion { margin-bottom: 8px; border: 1px solid var(--border); }
+  .acc-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--surface);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .acc-header:hover { background: var(--surface2); }
+  .acc-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-bright);
+    letter-spacing: 0.05em;
+    flex: 1;
+  }
+  .acc-tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    padding: 2px 7px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+  .tag-emergency { background: rgba(255,71,87,0.15); color: var(--red); border: 1px solid rgba(255,71,87,0.3); }
+  .tag-core { background: rgba(0,212,255,0.1); color: var(--accent); border: 1px solid rgba(0,212,255,0.25); }
+  .tag-procedure { background: rgba(57,211,83,0.1); color: var(--accent3); border: 1px solid rgba(57,211,83,0.25); }
+  .tag-scoring { background: rgba(240,192,64,0.1); color: var(--accent4); border: 1px solid rgba(240,192,64,0.3); }
+
+  .acc-chevron {
+    color: var(--text-dim);
+    font-size: 10px;
+    transition: transform 0.2s;
+    font-family: var(--mono);
+  }
+  .accordion.open .acc-chevron { transform: rotate(90deg); }
+  .acc-body {
+    display: none;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    padding: 20px;
+  }
+  .accordion.open .acc-body { display: block; }
+
+  .subsection { margin-bottom: 20px; }
+  .subsection:last-child { margin-bottom: 0; }
+  .sub-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(0,212,255,0.2);
+  }
+
+  .tbl-wrap { overflow-x: auto; margin: 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  th {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 8px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    text-align: left;
+  }
+  td {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.015); }
+  tr:hover td { background: rgba(0,212,255,0.04); }
+
+  .bullets { list-style: none; padding: 0; }
+  .bullets li {
+    padding: 4px 0 4px 16px;
+    position: relative;
+    color: var(--text);
+    font-size: 12px;
+  }
+  .bullets li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-family: var(--mono);
+  }
+  .bullets li strong { color: var(--text-bright); font-weight: 600; }
+
+  .alert {
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    border-left: 3px solid;
+  }
+  .alert-red { border-color: var(--red); background: rgba(255,71,87,0.07); color: var(--text); }
+  .alert-blue { border-color: var(--accent); background: rgba(0,212,255,0.06); color: var(--text); }
+  .alert-green { border-color: var(--accent3); background: rgba(57,211,83,0.06); color: var(--text); }
+  .alert-yellow { border-color: var(--accent4); background: rgba(240,192,64,0.06); color: var(--text); }
+  .alert strong { font-family: var(--mono); font-size: 11px; display: block; margin-bottom: 4px; }
+  .alert-red strong { color: var(--red); }
+  .alert-blue strong { color: var(--accent); }
+  .alert-green strong { color: var(--accent3); }
+  .alert-yellow strong { color: var(--accent4); }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 700px) { .grid2 { grid-template-columns: 1fr; } }
+
+  code {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--surface);
+    padding: 1px 5px;
+    color: var(--accent4);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-bright);
+  }
+  .section-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .emergency-card {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    border-left: 3px solid var(--red);
+  }
+  .emergency-name {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--red);
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+  }
+  .em-row { display: grid; grid-template-columns: 120px 1fr; gap: 8px; margin-bottom: 4px; font-size: 12px; }
+  .em-label { font-family: var(--mono); font-size: 10px; color: var(--text-dim); padding-top: 1px; }
+
+  .framework {
+    border: 1px solid rgba(0,212,255,0.3);
+    background: rgba(0,212,255,0.04);
+    padding: 16px 20px;
+    margin-top: 8px;
+  }
+  .framework-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+  .fw-item {
+    display: flex;
+    gap: 12px;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(0,212,255,0.08);
+    font-size: 12px;
+  }
+  .fw-item:last-child { border-bottom: none; }
+  .fw-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    font-weight: 600;
+    min-width: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">MS3</div>
+  <div class="header-title">Inpatient GI — Clinical Reference</div>
+  <div class="header-sub">UCSD Hillcrest</div>
+</div>
+
+<div class="nav" id="nav">
+  <button class="nav-pill active" onclick="showSection('gi-bleed', this)">GI Bleeding</button>
+  <button class="nav-pill" onclick="showSection('pancreatitis', this)">Pancreatitis</button>
+  <button class="nav-pill" onclick="showSection('gallstone', this)">Gallstone / ERCP</button>
+  <button class="nav-pill" onclick="showSection('ibd', this)">IBD Flare</button>
+  <button class="nav-pill" onclick="showSection('nv', this)">Nausea / Vomiting</button>
+  <button class="nav-pill" onclick="showSection('diarrhea', this)">Diarrhea / Pain / Dysphagia</button>
+  <button class="nav-pill" onclick="showSection('cancer', this)">Cancer Complications</button>
+  <button class="nav-pill" onclick="showSection('emergencies', this)">GI Emergencies</button>
+  <button class="nav-pill" onclick="showSection('framework', this)">Rounds Framework</button>
+</div>
+
+<div class="main">
+
+  <!-- GI BLEEDING -->
+  <div id="gi-bleed" class="section active">
+    <div class="section-header">
+      <div class="section-title">GI Bleeding</div>
+      <div class="section-desc">Triage · Resuscitation · Differentials · Procedure Timing</div>
+    </div>
+
+    <div class="accordion open">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Triage & Resuscitation</div>
+        <span class="acc-tag tag-emergency">EMERGENCY</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="alert alert-red">
+          <strong>IMMEDIATE</strong>
+          Two large-bore IVs (≥18g) · Type & screen · CBC, CMP, coags, lactate · Active resuscitation before scope if hemodynamically unstable
+        </div>
+        <div class="subsection">
+          <div class="sub-title">Transfusion Thresholds</div>
+          <ul class="bullets">
+            <li><strong>pRBC:</strong> Hgb &lt;7 (or &lt;8 with known CAD)</li>
+            <li><strong>FFP/platelets:</strong> if coagulopathic</li>
+            <li><strong>Anticoagulation:</strong> hold; reverse if life-threatening — <code>PCC</code> preferred over FFP for warfarin; <code>andexanet alfa</code> for Xa inhibitors</li>
+          </ul>
+        </div>
+        <div class="subsection">
+          <div class="sub-title">Scoring Systems</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Score</th><th>Timing</th><th>Purpose</th><th>Key Threshold</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Glasgow-Blatchford</strong></td><td>Pre-endoscopy</td><td>Identifies low-risk patients safe for outpatient management</td><td>Score 0-1 = outpatient safe</td></tr>
+                <tr><td><strong>Rockall</strong></td><td>Post-endoscopy</td><td>Predicts rebleed risk and mortality</td><td>Score ≥5 = high risk</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">UGIB vs. LGIB Differentiation</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Feature</th><th>UGIB (Above Lig. of Treitz)</th><th>LGIB (Below Lig. of Treitz)</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Presentation</strong></td><td>Hematemesis, melena, coffee-ground emesis</td><td>Hematochezia, maroon stool</td></tr>
+              <tr><td><strong>BUN:Cr ratio</strong></td><td>&gt;20 (blood digested → urea load)</td><td>Normal</td></tr>
+              <tr><td><strong>NGT lavage</strong></td><td>Bloody/coffee-ground if active</td><td>Clear (does NOT rule out UGIB)</td></tr>
+              <tr><td><strong>Top cause</strong></td><td>PUD</td><td>Diverticulosis</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Differentials</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="grid2">
+          <div class="subsection">
+            <div class="sub-title">UGIB Differential</div>
+            <ul class="bullets">
+              <li><strong>PUD</strong> — most common</li>
+              <li>Gastric/esophageal <strong>varices</strong></li>
+              <li><strong>Mallory-Weiss</strong> tear</li>
+              <li><strong>Dieulafoy</strong> lesion</li>
+              <li>AVM</li>
+              <li>Gastric cancer</li>
+              <li>Aortoenteric fistula</li>
+            </ul>
+          </div>
+          <div class="subsection">
+            <div class="sub-title">LGIB Differential</div>
+            <ul class="bullets">
+              <li><strong>Diverticulosis</strong> — most common</li>
+              <li>AVM</li>
+              <li><strong>Ischemic colitis</strong></li>
+              <li>Hemorrhoids</li>
+              <li>IBD</li>
+              <li>Colorectal cancer</li>
+              <li>Post-polypectomy bleed</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Procedure Timing</div>
+        <span class="acc-tag tag-procedure">PROCEDURE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Scenario</th><th>Procedure</th><th>Timing</th><th>Adjuncts</th></tr></thead>
+            <tbody>
+              <tr><td>Hemodynamically unstable UGIB</td><td>EGD</td><td><strong>Resuscitate first → EGD within 12h</strong></td><td>—</td></tr>
+              <tr><td>Stable UGIB</td><td>EGD</td><td>Within 24h</td><td>—</td></tr>
+              <tr><td>Variceal bleeding</td><td>EGD</td><td>Within 12h</td><td>Octreotide drip + ceftriaxone (SBP prophylaxis) + consider TIPS if refractory</td></tr>
+              <tr><td>Stable LGIB</td><td>Colonoscopy</td><td>Within 24h</td><td>—</td></tr>
+              <tr><td>Brisk/unstable LGIB</td><td>IR angioembolization or surgery</td><td>Emergent</td><td>Resuscitate simultaneously</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANCREATITIS -->
+  <div id="pancreatitis" class="section">
+    <div class="section-header">
+      <div class="section-title">Acute Pancreatitis</div>
+      <div class="section-desc">Diagnosis · Severity · Management · Complications</div>
+    </div>
+
+    <div class="accordion open">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Diagnosis — Atlanta Criteria (2 of 3)</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <ul class="bullets">
+          <li>Characteristic abdominal pain (epigastric, radiating to back)</li>
+          <li>Lipase ≥3× ULN</li>
+          <li>Characteristic imaging findings</li>
+        </ul>
+        <div class="alert alert-yellow" style="margin-top:12px">
+          <strong>IMAGING TIMING</strong>
+          CT abdomen/pelvis only if diagnosis uncertain OR failure to improve at 48–72h. Do not image routinely on admission.
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Severity Stratification</div>
+        <span class="acc-tag tag-scoring">SCORING</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="subsection">
+          <div class="sub-title">BISAP Score (bedside, predicts mortality)</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Letter</th><th>Criterion</th><th>Threshold</th></tr></thead>
+              <tbody>
+                <tr><td><strong>B</strong></td><td>BUN</td><td>&gt;25 mg/dL</td></tr>
+                <tr><td><strong>I</strong></td><td>Impaired mental status</td><td>GCS &lt;15</td></tr>
+                <tr><td><strong>S</strong></td><td>SIRS criteria</td><td>≥2 of 4 criteria present</td></tr>
+                <tr><td><strong>A</strong></td><td>Age</td><td>&gt;60 years</td></tr>
+                <tr><td><strong>P</strong></td><td>Pleural effusion</td><td>On imaging</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="subsection">
+          <div class="sub-title">Revised Atlanta Classification</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Category</th><th>Definition</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Mild</strong></td><td>No organ failure, no local/systemic complications</td></tr>
+                <tr><td><strong>Moderately Severe</strong></td><td>Transient organ failure (&lt;48h) OR local/systemic complications</td></tr>
+                <tr><td><strong>Severe</strong></td><td>Persistent organ failure (&gt;48h) — ICU</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Management</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="alert alert-blue">
+          <strong>IVF</strong>
+          LR preferred over NS (lower systemic inflammation). 250–500 mL/hr initially — reassess frequently. Goal-directed resuscitation, not blanket aggressive fluids.
+        </div>
+        <div class="alert alert-green">
+          <strong>NUTRITION</strong>
+          Early oral feeding as tolerated — do NOT NPO unnecessarily. NG/NJ enteral nutrition if unable to tolerate PO. TPN only as last resort.
+        </div>
+        <div class="alert alert-red">
+          <strong>ANTIBIOTICS</strong>
+          No prophylactic antibiotics. Only if infected necrosis confirmed or strongly suspected (gas on CT = pathognomonic; FNA if uncertain).
+        </div>
+        <ul class="bullets" style="margin-top:8px">
+          <li><strong>Pain:</strong> IV opioids acceptable; NSAIDs if renal function intact</li>
+          <li><strong>No role for early ERCP</strong> in pancreatitis alone — only if concurrent cholangitis</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Etiology Differential</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Etiology</th><th>Frequency</th><th>Key Clue</th></tr></thead>
+            <tbody>
+              <tr><td>Gallstones</td><td>~40%</td><td>RUQ pain, elevated bili/ALP, stones on US</td></tr>
+              <tr><td>Alcohol</td><td>~30%</td><td>History, no other etiology</td></tr>
+              <tr><td>Hypertriglyceridemia</td><td>—</td><td>TG &gt;1000 mg/dL</td></tr>
+              <tr><td>Hypercalcemia</td><td>—</td><td>Ca2+ on CMP, check PTH</td></tr>
+              <tr><td>Medications</td><td>—</td><td>Azathioprine, thiazides, valproate, GLP-1 RAs</td></tr>
+              <tr><td>Post-ERCP</td><td>—</td><td>Rises within hours of procedure</td></tr>
+              <tr><td>Autoimmune (IgG4)</td><td>—</td><td>Elevated IgG4, sausage-shaped pancreas</td></tr>
+              <tr><td>Malignancy</td><td>—</td><td>Older patient, weight loss, dilated duct</td></tr>
+              <tr><td>Idiopathic</td><td>—</td><td>Diagnosis of exclusion</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Complications — Necrotizing Pancreatitis (UCSD Specialty)</div>
+        <span class="acc-tag tag-emergency">EMERGENCY</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Complication</th><th>Timing</th><th>Intervention</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Acute peripancreatic fluid collection</strong></td><td>&lt;4 weeks</td><td>Observe — resolves spontaneously</td></tr>
+              <tr><td><strong>Pancreatic pseudocyst</strong></td><td>&gt;4 weeks, walled-off fluid</td><td>Intervene only if symptomatic</td></tr>
+              <tr><td><strong>Acute necrotic collection</strong></td><td>&lt;4 weeks</td><td>Intervene if infected</td></tr>
+              <tr><td><strong>Walled-off necrosis (WON)</strong></td><td>&gt;4 weeks</td><td>Drain if infected — step-up approach</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="subsection" style="margin-top:16px">
+          <div class="sub-title">Step-Up Approach for Infected Necrotizing Pancreatitis</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Step</th><th>Intervention</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>Antibiotics (carbapenem)</td></tr>
+                <tr><td>2</td><td>IR-guided or EUS-guided drainage</td></tr>
+                <tr><td>3</td><td>Video-assisted retroperitoneal debridement (VARD) or endoscopic necrosectomy</td></tr>
+                <tr><td>4</td><td>Open surgical necrosectomy (last resort)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GALLSTONE / ERCP -->
+  <div id="gallstone" class="section">
+    <div class="section-header">
+      <div class="section-title">Gallstone Pancreatitis / Choledocholithiasis / Cholangitis</div>
+      <div class="section-desc">ERCP Indications · Cholangitis Management</div>
+    </div>
+
+    <div class="accordion open">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">ERCP Indications — ASGE Guidelines</div>
+        <span class="acc-tag tag-procedure">PROCEDURE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Probability</th><th>Criteria</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td><strong>High</strong></td><td>CBD stone on imaging OR bili &gt;4 + dilated CBD OR ascending cholangitis</td><td>ERCP before cholecystectomy</td></tr>
+              <tr><td><strong>Intermediate</strong></td><td>Bili 1.8–4 + dilated CBD, or recent biliary pancreatitis</td><td>EUS or MRCP first → ERCP if stone confirmed</td></tr>
+              <tr><td><strong>Low</strong></td><td>Bili &lt;1.8, no dilated CBD, no other criteria</td><td>Proceed to cholecystectomy; intraoperative cholangiogram</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tbl-wrap" style="margin-top:12px">
+          <table>
+            <thead><tr><th>Cholangitis Severity</th><th>ERCP Timing</th></tr></thead>
+            <tbody>
+              <tr><td>Cholangitis (stable)</td><td>Urgent &lt;24h</td></tr>
+              <tr><td>Cholangitis + vasopressors (Reynolds' pentad)</td><td>Emergent — ICU, resuscitate simultaneously</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Cholangitis — Clinical Presentation & Management</div>
+        <span class="acc-tag tag-emergency">EMERGENCY</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="grid2">
+          <div>
+            <div class="sub-title">Charcot's Triad</div>
+            <ul class="bullets">
+              <li>RUQ pain</li>
+              <li>Fever</li>
+              <li>Jaundice</li>
+            </ul>
+          </div>
+          <div>
+            <div class="sub-title">Reynolds' Pentad (septic = emergency)</div>
+            <ul class="bullets">
+              <li>Charcot's triad +</li>
+              <li><strong>Hypotension</strong></li>
+              <li><strong>Altered mental status</strong></li>
+            </ul>
+          </div>
+        </div>
+        <div class="sub-title" style="margin-top:16px">Management</div>
+        <ul class="bullets">
+          <li><strong>IVF resuscitation</strong></li>
+          <li><strong>Antibiotics:</strong> pip-tazo OR ceftriaxone + metronidazole</li>
+          <li><strong>Urgent ERCP</strong> with biliary decompression</li>
+          <li><strong>ICU</strong> if vasopressor-dependent</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- IBD -->
+  <div id="ibd" class="section">
+    <div class="section-header">
+      <div class="section-title">IBD Flare</div>
+      <div class="section-desc">Work-Up · Crohn's vs. UC · Inpatient Management</div>
+    </div>
+
+    <div class="accordion open">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Work-Up</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Category</th><th>Studies</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Stool studies</strong></td><td>C. diff PCR, fecal calprotectin, culture, O&P, GI pathogen panel</td><td>Rule out infectious trigger</td></tr>
+              <tr><td><strong>Labs</strong></td><td>CBC w/ diff, CMP, CRP, ESR, albumin, iron studies</td><td>Severity, anemia, malnutrition</td></tr>
+              <tr><td><strong>Imaging</strong></td><td>CT abdomen/pelvis with contrast; MRI enterography for small bowel Crohn's</td><td>Abscess, perforation, fistula, obstruction</td></tr>
+              <tr><td><strong>Endoscopy</strong></td><td>Flexible sigmoidoscopy or colonoscopy</td><td>After infectious etiology excluded</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Crohn's vs. UC — Key Differentiators</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Feature</th><th>Crohn's Disease</th><th>Ulcerative Colitis</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Distribution</strong></td><td>Skip lesions, any GI tract (mouth to anus)</td><td>Continuous, colon only — rectum always involved</td></tr>
+              <tr><td><strong>Depth</strong></td><td>Transmural</td><td>Mucosal/submucosal only</td></tr>
+              <tr><td><strong>Complications</strong></td><td>Fistula, abscess, stricture, SBO</td><td>Toxic megacolon, dysplasia, cancer</td></tr>
+              <tr><td><strong>Surgical cure</strong></td><td>No</td><td>Yes — total proctocolectomy</td></tr>
+              <tr><td><strong>Endoscopy</strong></td><td>Cobblestoning, deep ulcers, skip areas</td><td>Continuous friable mucosa, loss of haustra</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Inpatient Management</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="alert alert-red">
+          <strong>AVOID OPIOIDS</strong>
+          Risk of toxic megacolon; masks clinical deterioration
+        </div>
+        <div class="alert alert-blue">
+          <strong>DVT PROPHYLAXIS</strong>
+          IBD is a hypercoagulable state — heparin SQ unless actively bleeding
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Therapy</th><th>Details</th><th>Indication</th></tr></thead>
+            <tbody>
+              <tr><td><strong>IV steroids</strong></td><td>Methylprednisolone 40–60 mg/day OR hydrocortisone 300 mg/day</td><td>Moderate-severe flare</td></tr>
+              <tr><td><strong>Infliximab</strong></td><td>Biologic rescue</td><td>Steroid-refractory UC</td></tr>
+              <tr><td><strong>Vedolizumab</strong></td><td>Gut-selective biologic</td><td>Second-line biologic</td></tr>
+              <tr><td><strong>Cyclosporine</strong></td><td>IV salvage therapy</td><td>Severe UC refractory to steroids and biologics</td></tr>
+              <tr><td><strong>Surgical consult</strong></td><td>Early — do not delay</td><td>Toxic megacolon, perforation, abscess, refractory disease</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAUSEA / VOMITING -->
+  <div id="nv" class="section">
+    <div class="section-header">
+      <div class="section-title">Nausea & Vomiting</div>
+      <div class="section-desc">Rule Out Obstruction First · Broad Differential</div>
+    </div>
+
+    <div class="accordion open">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Rule Out Obstruction — Imaging & Thresholds</div>
+        <span class="acc-tag tag-emergency">EMERGENCY</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Obstruction Type</th><th>Clinical Clue</th><th>Imaging Finding</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Gastric outlet (GOO)</strong></td><td>Succussion splash, projectile vomiting, hypochloremic hypokalemic metabolic alkalosis</td><td>Dilated stomach on CT</td><td>NG decompression + upper endoscopy</td></tr>
+              <tr><td><strong>SBO</strong></td><td>Crampy pain, obstipation, prior surgery</td><td>Dilated small bowel &gt;3 cm with transition point</td><td>NPO, NGT, surgical consult if complete or no improvement</td></tr>
+              <tr><td><strong>LBO</strong></td><td>Obstipation, abdominal distension</td><td>Dilated colon &gt;6 cm; cecum &gt;9 cm = impending perforation</td><td>CT, surgical/GI consult; colonoscopic decompression for sigmoid volvulus</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Broad Differential for Nausea/Vomiting</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Category</th><th>Causes</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Medications</strong></td><td>Opioids, chemotherapy, antibiotics, digoxin</td></tr>
+              <tr><td><strong>Obstruction</strong></td><td>GOO, SBO, LBO, volvulus</td></tr>
+              <tr><td><strong>GI</strong></td><td>Gastroparesis, pancreatitis, cholecystitis, appendicitis, hepatitis</td></tr>
+              <tr><td><strong>Metabolic</strong></td><td>Uremia, DKA, hypercalcemia, adrenal insufficiency</td></tr>
+              <tr><td><strong>Neurologic</strong></td><td>Raised ICP, vestibular disorder, migraine</td></tr>
+              <tr><td><strong>Other</strong></td><td>Pregnancy (always check), SIADH, post-op</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIARRHEA / PAIN / DYSPHAGIA -->
+  <div id="diarrhea" class="section">
+    <div class="section-header">
+      <div class="section-title">Diarrhea / Abdominal Pain / Dysphagia</div>
+      <div class="section-desc">Acute vs. Chronic · HIV Considerations · Obstruction Patterns</div>
+    </div>
+
+    <div class="accordion open">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Diarrhea — Acute vs. Chronic</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Feature</th><th>Acute (&lt;4 weeks)</th><th>Chronic (&gt;4 weeks)</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Priority DDx</strong></td><td>Infectious (C. diff, ETEC, Salmonella, Shigella), ischemic, medication-induced</td><td>IBD, IBS, malabsorption (celiac, SIBO), microscopic colitis, VIPoma</td></tr>
+              <tr><td><strong>Work-up</strong></td><td>C. diff PCR, stool culture, O&P, GI pathogen panel, CBC, CMP, lactoferrin</td><td>Colonoscopy with biopsy, celiac serologies, stool fat, 72h fecal fat</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="subsection" style="margin-top:14px">
+          <div class="sub-title">Secretory vs. Osmotic Diarrhea</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Type</th><th>Behavior with Fasting</th><th>Stool Osmotic Gap</th><th>Examples</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Secretory</strong></td><td>Persists with fasting</td><td>&lt;50</td><td>VIPoma, microscopic colitis, bile acid malabsorption</td></tr>
+                <tr><td><strong>Osmotic</strong></td><td>Stops with fasting</td><td>&gt;125</td><td>Lactose intolerance, laxative use, celiac</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="subsection" style="margin-top:14px">
+          <div class="sub-title">HIV/AIDS Diarrhea — CD4-Based Differential</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>CD4 Count</th><th>Additional Pathogens to Consider</th></tr></thead>
+              <tbody>
+                <tr><td>&gt;200</td><td>Same as immunocompetent</td></tr>
+                <tr><td>100–200</td><td>+ Cryptosporidium, Microsporidium, CMV colitis</td></tr>
+                <tr><td>&lt;100</td><td>+ MAC, CMV, Isospora, Cyclospora, Kaposi's sarcoma</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Abdominal Pain — Acute vs. Chronic</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Context</th><th>Differential</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Acute, no prior surgery</strong></td><td>Appendicitis, cholecystitis, perforation (free air), ischemic bowel (lactic acidosis + out-of-proportion pain), obstruction, AAA (do not miss)</td></tr>
+              <tr><td><strong>Acute, prior surgery</strong></td><td>Adhesion-related SBO, anastomotic leak, internal hernia (post-Roux-en-Y), dumping syndrome</td></tr>
+              <tr><td><strong>Chronic</strong></td><td>IBD, IBS, chronic pancreatitis, PUD, mesenteric ischemia, malignancy</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="alert alert-red" style="margin-top:12px">
+          <strong>DO NOT MISS</strong>
+          Mesenteric ischemia: pain out of proportion to exam + elevated lactate. AAA: pulsatile mass + hypotension + back pain = ruptured AAA until proven otherwise.
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Dysphagia — Localization Framework</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Type</th><th>Symptom Pattern</th><th>Mechanism</th><th>Examples</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Oropharyngeal (transfer)</strong></td><td>Liquid worse than solid; coughing, aspiration</td><td>Neuromuscular</td><td>Stroke, myasthenia gravis, Parkinson's</td></tr>
+              <tr><td><strong>Esophageal — mechanical</strong></td><td>Progressive: solids first, then liquids</td><td>Structural narrowing</td><td>Stricture, Schatzki ring, esophageal cancer, extrinsic compression</td></tr>
+              <tr><td><strong>Esophageal — motility</strong></td><td>Both solids and liquids from onset</td><td>Dysmotility</td><td>Achalasia, diffuse esophageal spasm, scleroderma</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="alert alert-red" style="margin-top:12px">
+          <strong>FOOD IMPACTION — EMERGENCY</strong>
+          Urgent endoscopic removal within 24h. Emergent if complete esophageal obstruction. "Steakhouse syndrome" = meat impaction in Schatzki ring or stricture.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANCER -->
+  <div id="cancer" class="section">
+    <div class="section-header">
+      <div class="section-title">Cancer of Known Primary — GI Complications</div>
+      <div class="section-desc">Inpatient Management of Oncologic GI Emergencies</div>
+    </div>
+
+    <div class="accordion open">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Common Inpatient GI Complications</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Complication</th><th>Key Cancers</th><th>Management</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Malignant obstruction</strong></td><td>Colorectal, gastric, pancreatic</td><td>Colonic stenting vs. diverting ostomy — goals of care discussion essential</td></tr>
+              <tr><td><strong>Malignant ascites</strong></td><td>Ovarian, colorectal, hepatocellular, gastric</td><td>Paracentesis for symptom relief; SAAG &lt;1.1 with high protein = exudative/malignant</td></tr>
+              <tr><td><strong>Biliary obstruction / cholangitis</strong></td><td>Pancreatic, cholangiocarcinoma</td><td>ERCP with stenting vs. PTC (percutaneous transhepatic cholangiography)</td></tr>
+              <tr><td><strong>GI bleeding</strong></td><td>Gastric, colorectal, HCC (varices)</td><td>Endoscopic hemostasis vs. IR embolization</td></tr>
+              <tr><td><strong>Bowel perforation</strong></td><td>Any</td><td>Surgical emergency regardless of cancer stage unless goals of care are comfort-focused</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMERGENCIES -->
+  <div id="emergencies" class="section">
+    <div class="section-header">
+      <div class="section-title">GI Emergencies</div>
+      <div class="section-desc">Rapid Recognition · Immediate Actions</div>
+    </div>
+
+    <div class="emergency-card">
+      <div class="emergency-name">BRISK UGIB</div>
+      <div class="em-row"><div class="em-label">Hallmark</div><div>Hematemesis + hemodynamic instability</div></div>
+      <div class="em-row"><div class="em-label">Action</div><div>2 large-bore IVs · Type & cross · Octreotide if variceal suspected · Emergent EGD</div></div>
+    </div>
+
+    <div class="emergency-card">
+      <div class="emergency-name">BRISK LGIB</div>
+      <div class="em-row"><div class="em-label">Hallmark</div><div>Hematochezia + hemodynamic instability</div></div>
+      <div class="em-row"><div class="em-label">Action</div><div>Resuscitate · IR angioembolization if too unstable for scope · OR if IR unavailable</div></div>
+    </div>
+
+    <div class="emergency-card">
+      <div class="emergency-name">FOOD IMPACTION</div>
+      <div class="em-row"><div class="em-label">Hallmark</div><div>Dysphagia, drooling, chest pain — unable to manage secretions</div></div>
+      <div class="em-row"><div class="em-label">Action</div><div>Urgent endoscopy &lt;24h · Emergent if complete esophageal obstruction</div></div>
+    </div>
+
+    <div class="emergency-card">
+      <div class="emergency-name">CHOLANGITIS + VASOPRESSORS</div>
+      <div class="em-row"><div class="em-label">Hallmark</div><div>Reynolds' pentad: RUQ pain + fever + jaundice + hypotension + AMS</div></div>
+      <div class="em-row"><div class="em-label">Action</div><div>ICU · Aggressive IVF · Pip-tazo · Emergent ERCP</div></div>
+    </div>
+
+    <div class="emergency-card">
+      <div class="emergency-name">NECROTIZING PANCREATITIS + VASOPRESSORS</div>
+      <div class="em-row"><div class="em-label">Hallmark</div><div>Gas in necrosis on CT + SIRS + organ failure</div></div>
+      <div class="em-row"><div class="em-label">Action</div><div>ICU · Carbapenem · Enteral nutrition · IR/surgical/GI consult · Step-up approach</div></div>
+    </div>
+
+    <div class="emergency-card">
+      <div class="emergency-name">SIGMOID VOLVULUS</div>
+      <div class="em-row"><div class="em-label">Hallmark</div><div>Omega-sign on KUB · Obstipation · Massive distension</div></div>
+      <div class="em-row"><div class="em-label">Action</div><div>Flexible sigmoidoscopy decompression · Surgical consult · Elective sigmoid colectomy to prevent recurrence</div></div>
+    </div>
+
+    <div class="emergency-card">
+      <div class="emergency-name">CECAL VOLVULUS</div>
+      <div class="em-row"><div class="em-label">Hallmark</div><div>Coffee-bean sign · RLQ pain · Cannot be decompressed endoscopically</div></div>
+      <div class="em-row"><div class="em-label">Action</div><div>Surgical emergency — right hemicolectomy</div></div>
+    </div>
+
+    <div class="emergency-card">
+      <div class="emergency-name">FOREIGN BODY INGESTION</div>
+      <div class="em-row"><div class="em-label">Hallmark</div><div>Variable — button batteries cause liquefactive necrosis within hours</div></div>
+      <div class="em-row"><div class="em-label">Action</div><div>Emergent endoscopy if: battery · Sharp object · Object &gt;6 cm · Symptomatic</div></div>
+    </div>
+  </div>
+
+  <!-- FRAMEWORK -->
+  <div id="framework" class="section">
+    <div class="section-header">
+      <div class="section-title">Rounds Framework</div>
+      <div class="section-desc">Six Questions to Answer for Every GI Patient</div>
+    </div>
+    <div class="framework">
+      <div class="framework-title">APPLY TO EVERY PATIENT ON ROUNDS</div>
+      <div class="fw-item"><div class="fw-num">01</div><div>What is the <strong>diagnosis</strong> / leading differential?</div></div>
+      <div class="fw-item"><div class="fw-num">02</div><div>What is the <strong>severity</strong>? (apply scoring system if applicable: BISAP, Glasgow-Blatchford, Rockall)</div></div>
+      <div class="fw-item"><div class="fw-num">03</div><div>What <strong>resuscitation</strong> has occurred and what still needs to occur?</div></div>
+      <div class="fw-item"><div class="fw-num">04</div><div>What <strong>procedure</strong> is indicated, and <em>when</em>?</div></div>
+      <div class="fw-item"><div class="fw-num">05</div><div>What <strong>complications</strong> need to be monitored for?</div></div>
+      <div class="fw-item"><div class="fw-num">06</div><div>What is the <strong>disposition</strong>? (ICU vs. floor vs. discharge criteria)</div></div>
+    </div>
+
+    <div style="margin-top:20px">
+      <div class="accordion open">
+        <div class="acc-header" onclick="toggle(this)">
+          <div class="acc-label">High-Yield Scoring Systems — Quick Reference</div>
+          <span class="acc-tag tag-scoring">SCORING</span>
+          <span class="acc-chevron">›</span>
+        </div>
+        <div class="acc-body">
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Score</th><th>Disease</th><th>Timing</th><th>Purpose</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Glasgow-Blatchford</strong></td><td>GI Bleed</td><td>Pre-endoscopy</td><td>Identify low-risk patients for outpatient management</td></tr>
+                <tr><td><strong>Rockall</strong></td><td>GI Bleed</td><td>Post-endoscopy</td><td>Predict rebleed risk and mortality</td></tr>
+                <tr><td><strong>BISAP</strong></td><td>Pancreatitis</td><td>Admission</td><td>Predict severe pancreatitis and mortality (score ≥3 = high risk)</td></tr>
+                <tr><td><strong>Revised Atlanta</strong></td><td>Pancreatitis</td><td>Ongoing</td><td>Classify severity (mild / moderately severe / severe)</td></tr>
+                <tr><td><strong>CT Severity Index</strong></td><td>Pancreatitis</td><td>48–72h if no improvement</td><td>Grade pancreatic necrosis on CT</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function showSection(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function toggle(header) {
+    header.parentElement.classList.toggle('open');
+  }
+</script>
+</body>
+</html>
