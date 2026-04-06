@@ -104,15 +104,52 @@
   }
 
   .nav {
-    display: flex;
-    gap: 4px;
-    padding: 12px 24px;
     background: var(--surface);
     border-bottom: 1px solid var(--border);
+  }
+  .nav-groups {
+    display: flex;
+    gap: 0;
+    padding: 8px 24px 0;
     overflow-x: auto;
     scrollbar-width: none;
   }
-  .nav::-webkit-scrollbar { display: none; }
+  .nav-groups::-webkit-scrollbar { display: none; }
+  .nav-group-btn {
+    font-family: var(--mono);
+    font-size: 9px;
+    padding: 5px 13px 7px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-bottom: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    white-space: nowrap;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: color 0.15s;
+    position: relative;
+    top: 1px;
+  }
+  .nav-group-btn:hover { color: var(--text); }
+  .nav-group-btn.active {
+    color: var(--accent);
+    background: var(--surface2);
+    border-color: var(--border);
+    border-bottom-color: var(--surface2);
+  }
+  .nav-pages {
+    display: none;
+    gap: 4px;
+    padding: 8px 24px;
+    background: var(--surface2);
+    border-top: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-pages::-webkit-scrollbar { display: none; }
+  .nav-pages.active { display: flex; }
   .nav-pill {
     font-family: var(--mono);
     font-size: 10px;
@@ -345,16 +382,36 @@
 </div>
 
 <div class="nav" id="nav">
-  <button class="nav-pill active" onclick="showSection('gi-bleed', this)">GI Bleeding</button>
-  <button class="nav-pill" onclick="showSection('pancreatitis', this)">Pancreatitis</button>
-  <button class="nav-pill" onclick="showSection('gallstone', this)">Gallstone / ERCP</button>
-  <button class="nav-pill" onclick="showSection('ibd', this)">IBD Flare</button>
-  <button class="nav-pill" onclick="showSection('nv', this)">Nausea / Vomiting</button>
-  <button class="nav-pill" onclick="showSection('diarrhea', this)">Diarrhea / Pain / Dysphagia</button>
-  <button class="nav-pill" onclick="showSection('cancer', this)">Cancer Complications</button>
-  <button class="nav-pill" onclick="showSection('cirrhosis', this)">Cirrhosis</button>
-  <button class="nav-pill" onclick="showSection('emergencies', this)">GI Emergencies</button>
-  <button class="nav-pill" onclick="showSection('framework', this)">Rounds Framework</button>
+  <div class="nav-groups">
+    <button class="nav-group-btn active" data-group="acute" onclick="showGroup('acute',this)">Acute</button>
+    <button class="nav-group-btn" data-group="liver" onclick="showGroup('liver',this)">Liver / Biliary</button>
+    <button class="nav-group-btn" data-group="inflammatory" onclick="showGroup('inflammatory',this)">Inflammatory</button>
+    <button class="nav-group-btn" data-group="symptoms" onclick="showGroup('symptoms',this)">Symptoms</button>
+    <button class="nav-group-btn" data-group="reference" onclick="showGroup('reference',this)">Reference</button>
+  </div>
+  <div class="nav-pages active" id="grp-acute">
+    <button class="nav-pill active" onclick="showSection('gi-bleed',this)">GI Bleeding</button>
+    <button class="nav-pill" onclick="showSection('emergencies',this)">Emergencies</button>
+  </div>
+  <div class="nav-pages" id="grp-liver">
+    <button class="nav-pill" onclick="showSection('cirrhosis',this)">Cirrhosis</button>
+    <button class="nav-pill" onclick="showSection('biliary',this)">Biliary Pathologies</button>
+    <button class="nav-pill" onclick="showSection('pancreatitis',this)">Pancreatitis</button>
+  </div>
+  <div class="nav-pages" id="grp-inflammatory">
+    <button class="nav-pill" onclick="showSection('ibd',this)">IBD Flare</button>
+    <button class="nav-pill" onclick="showSection('colitis',this)">Colitis</button>
+  </div>
+  <div class="nav-pages" id="grp-symptoms">
+    <button class="nav-pill" onclick="showSection('nv',this)">Nausea / Vomiting</button>
+    <button class="nav-pill" onclick="showSection('diarrhea',this)">Diarrhea</button>
+    <button class="nav-pill" onclick="showSection('abdpain',this)">Abdominal Pain</button>
+    <button class="nav-pill" onclick="showSection('dysphagia',this)">Dysphagia</button>
+    <button class="nav-pill" onclick="showSection('cancer',this)">Cancer</button>
+  </div>
+  <div class="nav-pages" id="grp-reference">
+    <button class="nav-pill" onclick="showSection('framework',this)">Rounds Framework</button>
+  </div>
 </div>
 
 <div class="main">
@@ -632,14 +689,134 @@
     </div>
   </div>
 
-  <!-- GALLSTONE / ERCP -->
-  <div id="gallstone" class="section">
+  <!-- BILIARY PATHOLOGIES -->
+  <div id="biliary" class="section">
     <div class="section-header">
-      <div class="section-title">Gallstone Pancreatitis / Choledocholithiasis / Cholangitis</div>
-      <div class="section-desc">ERCP Indications · Cholangitis Management</div>
+      <div class="section-title">Biliary Pathologies</div>
+      <div class="section-desc">Cholelithiasis · Biliary Colic · Cholecystitis · Choledocholithiasis · Cholangitis · PSC · ERCP</div>
     </div>
 
     <div class="accordion open">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Spectrum Overview</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Condition</th><th>Key Feature</th><th>Labs</th><th>Imaging</th><th>Treatment</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Cholelithiasis</strong></td>
+                <td>Often asymptomatic; GB stones</td>
+                <td>Normal</td>
+                <td>US: shadowing gallstones</td>
+                <td>Abx if infected; elective CCY if symptomatic</td>
+              </tr>
+              <tr>
+                <td><strong>Biliary Colic</strong></td>
+                <td>RUQ pain precipitated by fatty meals; self-limited (no fever, no ↑WBC)</td>
+                <td>Normal or mild ↑bili</td>
+                <td>US: stones ± GB distension</td>
+                <td>Diet modification, ↓ fat; elective CCY (definitive)</td>
+              </tr>
+              <tr>
+                <td><strong>Cholecystitis</strong></td>
+                <td>GB wall thickening ± edema; persistent pain, fever; Tokyo criteria</td>
+                <td>↑WBC, ↑CRP</td>
+                <td>US: wall thickening, pericholecystic fluid, sonographic Murphy's; HIDA if equivocal</td>
+                <td>IV abx → lap cholecystectomy</td>
+              </tr>
+              <tr>
+                <td><strong>Choledocholithiasis</strong></td>
+                <td>CBD stone; colicky pain or asymptomatic; risk of cholangitis</td>
+                <td>↑bili, ↑ALP, ↑GGT</td>
+                <td>US/CT ± MRCP (most sensitive); EUS</td>
+                <td>ERCP for stone extraction; abx + IVF if septic</td>
+              </tr>
+              <tr>
+                <td><strong>Cholangitis</strong></td>
+                <td>Charcot's triad: RUQ pain + fever + jaundice; sepsis if Reynolds' pentad</td>
+                <td>↑bili, ↑ALP, ↑WBC, ↑CRP/ESR</td>
+                <td>US/CT to assess ductal dilation; MRCP/ERCP</td>
+                <td>Abx + IVF → urgent ERCP; ICU if vasopressors</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Cholecystitis — Tokyo Criteria & Management</div>
+        <span class="acc-tag tag-emergency">EMERGENCY</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="grid2">
+          <div class="subsection">
+            <div class="sub-title">Diagnosis — Tokyo Guidelines</div>
+            <ul class="bullets">
+              <li><strong>Local:</strong> Murphy's sign, RUQ mass/pain/tenderness</li>
+              <li><strong>Systemic:</strong> fever, ↑CRP, ↑WBC</li>
+              <li><strong>Imaging:</strong> US findings (wall thickening ≥4 mm, pericholecystic fluid, sonographic Murphy's)</li>
+              <li>Suspected = 1 local + 1 systemic; Definite = suspected + imaging</li>
+            </ul>
+          </div>
+          <div class="subsection">
+            <div class="sub-title">Severity Grading (Tokyo)</div>
+            <ul class="bullets">
+              <li><strong>Grade I (Mild):</strong> No organ dysfunction, mild local inflammation → abx + early CCY</li>
+              <li><strong>Grade II (Moderate):</strong> ↑WBC &gt;18k, palpable mass, duration &gt;72h, marked local inflammation → abx + CCY within 72h or delayed</li>
+              <li><strong>Grade III (Severe):</strong> Organ dysfunction (CV, neuro, resp, renal, hepatic, heme) → ICU + percutaneous drainage + delayed CCY</li>
+            </ul>
+            <div class="alert alert-blue" style="margin-top:12px">
+              <strong>STANDARD TX</strong>
+              IV abx (pip-tazo or cefazolin + metronidazole) → laparoscopic cholecystectomy. Grade III: percutaneous cholecystostomy if too sick for surgery.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Cholangitis — Charcot's Triad & Reynolds' Pentad</div>
+        <span class="acc-tag tag-emergency">EMERGENCY</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="grid2">
+          <div>
+            <div class="sub-title">Charcot's Triad</div>
+            <ul class="bullets">
+              <li>RUQ pain</li>
+              <li>Fever / rigors</li>
+              <li>Jaundice</li>
+            </ul>
+          </div>
+          <div>
+            <div class="sub-title">Reynolds' Pentad (septic — emergency)</div>
+            <ul class="bullets">
+              <li>Charcot's triad +</li>
+              <li><strong>Hypotension</strong></li>
+              <li><strong>Altered mental status</strong></li>
+            </ul>
+          </div>
+        </div>
+        <div class="sub-title" style="margin-top:16px">Management</div>
+        <ul class="bullets">
+          <li><strong>IVF resuscitation</strong></li>
+          <li><strong>Antibiotics:</strong> pip-tazo OR ceftriaxone + metronidazole</li>
+          <li><strong>Urgent ERCP</strong> with biliary decompression (&lt;24h stable; emergent if Reynolds')</li>
+          <li><strong>ICU</strong> if vasopressor-dependent</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="accordion">
       <div class="acc-header" onclick="toggle(this)">
         <div class="acc-label">ERCP Indications — ASGE Guidelines</div>
         <span class="acc-tag tag-procedure">PROCEDURE</span>
@@ -670,38 +847,46 @@
 
     <div class="accordion">
       <div class="acc-header" onclick="toggle(this)">
-        <div class="acc-label">Cholangitis — Clinical Presentation & Management</div>
-        <span class="acc-tag tag-emergency">EMERGENCY</span>
+        <div class="acc-label">PSC — Primary Sclerosing Cholangitis</div>
+        <span class="acc-tag tag-core">CORE</span>
         <span class="acc-chevron">›</span>
       </div>
       <div class="acc-body">
         <div class="grid2">
-          <div>
-            <div class="sub-title">Charcot's Triad</div>
+          <div class="subsection">
+            <div class="sub-title">Clinical Features</div>
             <ul class="bullets">
-              <li>RUQ pain</li>
-              <li>Fever</li>
-              <li>Jaundice</li>
+              <li>Fibro-inflammatory destruction of <strong>intrahepatic and extrahepatic bile ducts</strong></li>
+              <li>Jaundice, pruritis</li>
+              <li>↑bili, ↑ALP (cholestatic pattern)</li>
+              <li>Strong association with <strong>IBD</strong> (especially UC)</li>
+            </ul>
+            <div class="sub-title" style="margin-top:14px">Risk of Malignancy</div>
+            <ul class="bullets">
+              <li><strong>Cholangiocarcinoma</strong> — major concern; annual MRI/MRCP</li>
+              <li>Colorectal cancer (in IBD + PSC patients)</li>
+              <li>Cirrhosis with portal hypertension if untreated</li>
             </ul>
           </div>
-          <div>
-            <div class="sub-title">Reynolds' Pentad (septic = emergency)</div>
+          <div class="subsection">
+            <div class="sub-title">Diagnosis</div>
             <ul class="bullets">
-              <li>Charcot's triad +</li>
-              <li><strong>Hypotension</strong></li>
-              <li><strong>Altered mental status</strong></li>
+              <li><strong>MRCP</strong> — "beads on a string" (multifocal strictures and dilations)</li>
+              <li>ERCP if MRCP inconclusive or therapeutic needed</li>
+              <li>AMA negative (unlike PBC)</li>
+            </ul>
+            <div class="sub-title" style="margin-top:14px">Treatment</div>
+            <ul class="bullets">
+              <li><strong>No proven medical therapy</strong> — ursodiol no longer recommended at high dose</li>
+              <li>PPAR agonists (phase II trials)</li>
+              <li>Dominant stricture → ERCP dilation/stenting</li>
+              <li><strong>Liver transplant</strong> — only definitive treatment</li>
             </ul>
           </div>
         </div>
-        <div class="sub-title" style="margin-top:16px">Management</div>
-        <ul class="bullets">
-          <li><strong>IVF resuscitation</strong></li>
-          <li><strong>Antibiotics:</strong> pip-tazo OR ceftriaxone + metronidazole</li>
-          <li><strong>Urgent ERCP</strong> with biliary decompression</li>
-          <li><strong>ICU</strong> if vasopressor-dependent</li>
-        </ul>
       </div>
     </div>
+
   </div>
 
   <!-- IBD -->
@@ -785,6 +970,226 @@
     </div>
   </div>
 
+  <!-- COLITIS -->
+  <div id="colitis" class="section">
+    <div class="section-header">
+      <div class="section-title">Colitis</div>
+      <div class="section-desc">History · Workup · Infectious · Ischemic · Drug-Induced · Microscopic · IBD</div>
+    </div>
+
+    <div class="accordion open">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">History &amp; Initial Workup</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="grid2">
+          <div class="subsection">
+            <div class="sub-title">Key History</div>
+            <ul class="bullets">
+              <li>Diarrhea, fever, abdominal pain</li>
+              <li>Bloody stool, mucoid stool</li>
+              <li>Weight loss, N/V</li>
+              <li>Travel history</li>
+              <li>Antibiotic use</li>
+              <li>Medication use (see drug-induced DDx)</li>
+              <li>Chemo / immunosuppression</li>
+              <li>Radiation history</li>
+              <li>Strange food exposures</li>
+              <li>Neutropenia</li>
+              <li>Family history</li>
+              <li>Vascular risk factors (ischemic)</li>
+              <li>Timing / onset (acute vs. chronic)</li>
+            </ul>
+          </div>
+          <div class="subsection">
+            <div class="sub-title">Workup</div>
+            <ul class="bullets">
+              <li>GI pathogen panel (GIPP), O&amp;P, Yersinia, C. diff</li>
+              <li>Fecal calprotectin</li>
+              <li>CBC, CMP, CRP, ESR</li>
+              <li><strong>★ CTA abdomen/pelvis</strong></li>
+              <li><strong>★ GI c/s</strong></li>
+            </ul>
+            <div class="alert alert-yellow" style="margin-top:12px">
+              <strong>FECAL CALPROTECTIN</strong>
+              (−) → IBD unlikely · &gt;600–800 → IBD · &lt;600 → non-specific inflammation / infection
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Infectious Colitis</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="grid2">
+          <div class="subsection">
+            <div class="sub-title">Common Pathogens</div>
+            <ul class="bullets">
+              <li><strong>Bacterial:</strong> Salmonella, Shigella, Campylobacter, E. coli (ETEC, EHEC), Yersinia, C. diff</li>
+              <li><strong>Viral:</strong> CMV (esp. immunocompromised), norovirus</li>
+              <li><strong>Parasitic:</strong> Giardia, Cryptosporidium, E. histolytica</li>
+            </ul>
+          </div>
+          <div class="subsection">
+            <div class="sub-title">STD-Associated Proctitis / Colitis</div>
+            <ul class="bullets">
+              <li>Chlamydia (LGV serovars)</li>
+              <li>Gonorrhea</li>
+              <li>Syphilis</li>
+              <li>HSV, HPV, mpox</li>
+              <li><em>Ask about sexual history; rectal swabs for PCR</em></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Ischemic Colitis</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="alert alert-blue">
+          <strong>KEY PATTERN</strong>
+          Segmental inflammation on CT/scope — distribution is the diagnostic clue. Ischemic colitis respects vascular territories and spares the rectum (dual blood supply).
+        </div>
+        <div class="grid2">
+          <div class="subsection">
+            <div class="sub-title">Distribution on CT / Scope</div>
+            <ul class="bullets">
+              <li><strong>Splenic flexure</strong> — SMA/IMA watershed (most common)</li>
+              <li><strong>Hepatic flexure</strong> — SMA territory</li>
+              <li><strong>Rectosigmoid</strong> — IMA watershed</li>
+              <li><strong>Right colon</strong> — suggests SMA occlusion (more severe)</li>
+              <li>Rectum typically <em>spared</em> (dual supply: IMA + internal iliac)</li>
+            </ul>
+          </div>
+          <div class="subsection">
+            <div class="sub-title">Risk Factors / Mechanisms</div>
+            <ul class="bullets">
+              <li><strong>Afib / embolic</strong> — SMA embolus → acute mesenteric ischemia</li>
+              <li><strong>Hypotension → iHD</strong> — low-flow state (post-op, sepsis, shock)</li>
+              <li><strong>CVD / atherosclerosis</strong> — chronic mesenteric ischemia</li>
+              <li>Medications: NSAIDs, cocaine, vasopressors</li>
+              <li>Hypercoagulable states → mesenteric venous thrombosis</li>
+            </ul>
+            <div class="alert alert-red" style="margin-top:10px">
+              <strong>ACUTE MESENTERIC ISCHEMIA</strong>
+              Right colon or pan-colonic ischemia + severe pain out of proportion → emergent CTA + surgical consult
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Drug-Induced Colitis</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Drug / Class</th><th>Pattern / Notes</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Olmesartan</strong> (ARB)</td><td>Sprue-like enteropathy — severe watery diarrhea, villous atrophy on biopsy; resolves with drug cessation</td></tr>
+              <tr><td><strong>ICIs</strong> (checkpoint inhibitors)</td><td>Immune-mediated colitis — watery/bloody diarrhea; tx: hold ICI, steroids ± infliximab/vedolizumab for severe</td></tr>
+              <tr><td><strong>MMF</strong> (mycophenolate)</td><td>IBD-like mucosal injury; dose-dependent</td></tr>
+              <tr><td><strong>Antibiotics</strong> (esp. clindamycin)</td><td>C. diff colitis; also direct mucosal injury</td></tr>
+              <tr><td><strong>NSAIDs</strong></td><td>Mucosal injury throughout GI tract; can trigger microscopic colitis</td></tr>
+              <tr><td><strong>PPIs</strong></td><td>Associated with microscopic colitis (collagenous &gt; lymphocytic)</td></tr>
+              <tr><td><strong>SSRIs</strong></td><td>Microscopic colitis association</td></tr>
+              <tr><td><strong>Chemo</strong></td><td>Direct mucosal toxicity; typhlitis in neutropenic patients</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Microscopic Colitis</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="alert alert-yellow">
+          <strong>CLINICAL PEARL</strong>
+          Normal colonoscopy + chronic non-bloody watery diarrhea = biopsy anyway. Microscopic colitis is a histologic diagnosis — you won't see it on scope.
+        </div>
+        <div class="grid2">
+          <div class="subsection">
+            <div class="sub-title">Types</div>
+            <ul class="bullets">
+              <li><strong>Collagenous colitis</strong> — thick subepithelial collagen band (&gt;10 µm)</li>
+              <li><strong>Lymphocytic colitis</strong> — ↑intraepithelial lymphocytes (&gt;20/100 epithelial cells)</li>
+              <li>Both: watery, non-bloody diarrhea; normal or near-normal mucosa on scope</li>
+            </ul>
+          </div>
+          <div class="subsection">
+            <div class="sub-title">Precipitating Drugs</div>
+            <ul class="bullets">
+              <li>NSAIDs</li>
+              <li>PPIs</li>
+              <li>SSRIs</li>
+              <li>Olmesartan</li>
+            </ul>
+            <div class="sub-title" style="margin-top:14px">Treatment</div>
+            <ul class="bullets">
+              <li>Discontinue offending drug</li>
+              <li><strong>Budesonide</strong> 9 mg/day × 8 weeks (first-line)</li>
+              <li>Bismuth subsalicylate (mild cases)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Other DDx — IBD, Autoimmune, Misc</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Category</th><th>Causes / Details</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>IBD</strong></td>
+                <td>Ulcerative colitis, Crohn's, indeterminate colitis — use fecal calprotectin to screen; colonoscopy with biopsy to confirm</td>
+              </tr>
+              <tr>
+                <td><strong>Autoimmune</strong></td>
+                <td>Sarcoidosis (non-caseating granulomas), vasculitis</td>
+              </tr>
+              <tr>
+                <td><strong>Radiation colitis</strong></td>
+                <td>Segmental; history of pelvic/abdominal radiation; can be acute or chronic (fibrosis)</td>
+              </tr>
+              <tr>
+                <td><strong>Misc</strong></td>
+                <td>Celiac, typhlitis (neutropenic enterocolitis — RLQ pain + fever in chemo patients), GvHD, endometriosis, iatrogenic (tube feeds, enemas)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
   <!-- NAUSEA / VOMITING -->
   <div id="nv" class="section">
     <div class="section-header">
@@ -837,15 +1242,116 @@
   </div>
 
   <!-- DIARRHEA / PAIN / DYSPHAGIA -->
+  <!-- DIARRHEA -->
   <div id="diarrhea" class="section">
     <div class="section-header">
-      <div class="section-title">Diarrhea / Abdominal Pain / Dysphagia</div>
-      <div class="section-desc">Acute vs. Chronic · HIV Considerations · Obstruction Patterns</div>
+      <div class="section-title">Diarrhea</div>
+      <div class="section-desc">Acute vs. Chronic · Mechanism-Based DDx · HIV Considerations</div>
     </div>
 
     <div class="accordion open">
       <div class="acc-header" onclick="toggle(this)">
-        <div class="acc-label">Diarrhea — Acute vs. Chronic</div>
+        <div class="acc-label">History Clues</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="grid2">
+          <div class="subsection">
+            <div class="sub-title">Key Questions</div>
+            <ul class="bullets">
+              <li><strong>Duration &amp; onset</strong> — acute (&lt;4 wk) vs. chronic (&gt;4 wk)</li>
+              <li><strong>Nocturnal diarrhea</strong> — strongly suggests secretory or inflammatory (not functional)</li>
+              <li><strong>Postprandial diarrhea</strong> — dumping syndrome, IBS-D, bile acid malabsorption</li>
+              <li><strong>Steatorrhea / greasy stools</strong> — malabsorption (EPI, celiac)</li>
+              <li><strong>Bloody stool</strong> — infectious, IBD, ischemic, malignancy</li>
+              <li><strong>Weight loss</strong> — malabsorption, IBD, malignancy</li>
+              <li><strong>Abdominal pain</strong> — character, location, timing</li>
+            </ul>
+          </div>
+          <div class="subsection">
+            <div class="sub-title">Exposure History</div>
+            <ul class="bullets">
+              <li><strong>Antibiotics</strong> — C. diff; always ask</li>
+              <li><strong>Travel / home water source</strong> — Giardia, Cryptosporidium, traveler's diarrhea</li>
+              <li><strong>Medications</strong> — see mechanism-based DDx</li>
+              <li><strong>Alcohol use</strong> — secretory component, EPI</li>
+              <li><strong>Gluten</strong> — celiac</li>
+              <li><strong>Immunosuppression</strong> — broadens infectious DDx</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion open">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Mechanism-Based Differential</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="subsection">
+          <div class="sub-title">Osmotic — stops with fasting · stool osmotic gap &gt;125</div>
+          <ul class="bullets">
+            <li>Carbohydrate malabsorption — lactose intolerance, fructose, sorbitol</li>
+            <li>Osmotic laxatives — magnesium, lactulose, PEG</li>
+            <li>Celiac disease (osmotic component)</li>
+          </ul>
+        </div>
+        <div class="subsection">
+          <div class="sub-title">Secretory — persists with fasting · stool osmotic gap &lt;50</div>
+          <ul class="bullets">
+            <li><strong>Neuroendocrine:</strong> VIPoma, gastrinoma (ZES), carcinoid, mastocytosis</li>
+            <li><strong>Bile acid malabsorption</strong> — post-cholecystectomy, Crohn's (ileal disease/resection)</li>
+            <li>Ethanol</li>
+            <li>Microscopic colitis (collagenous or lymphocytic)</li>
+            <li>Hypercalcemia</li>
+            <li>Vasculitis, Crohn's (secretory component)</li>
+            <li>Dumping syndrome / bowel resection</li>
+          </ul>
+        </div>
+        <div class="subsection">
+          <div class="sub-title">Malabsorption — steatorrhea, fat-soluble vitamin deficiency, weight loss</div>
+          <ul class="bullets">
+            <li><strong>EPI</strong> (exocrine pancreatic insufficiency) — chronic pancreatitis, pancreatic cancer, post-Whipple</li>
+            <li><strong>Celiac disease</strong> — villous atrophy, anti-tTG IgA, respond to gluten-free diet</li>
+            <li><strong>Whipple's disease</strong> — <em>Tropheryma whipplei</em>; triad: diarrhea, weight loss, arthralgias</li>
+            <li><strong>Short gut syndrome</strong> — extensive ileal or small bowel resection</li>
+            <li><strong>SIBO</strong> — small intestinal bacterial overgrowth; breath test</li>
+            <li>Chronic mesenteric ischemia</li>
+          </ul>
+        </div>
+        <div class="subsection">
+          <div class="sub-title">Motility / Dysmotility</div>
+          <ul class="bullets">
+            <li><strong>Scleroderma</strong> — gut dysmotility → pseudo-obstruction, SIBO, diarrhea</li>
+            <li><strong>Amyloidosis</strong> — autonomic neuropathy → gut dysmotility</li>
+            <li><strong>Sjögren's syndrome</strong></li>
+            <li>Diabetic autonomic neuropathy</li>
+            <li>Post-surgical (vagotomy, Roux-en-Y)</li>
+          </ul>
+        </div>
+        <div class="subsection">
+          <div class="sub-title">Functional</div>
+          <ul class="bullets">
+            <li><strong>IBS-D</strong> — Rome IV criteria; no nocturnal sx, no weight loss, no blood</li>
+            <li><strong>Post-infectious IBS</strong> — follows acute gastroenteritis; altered gut motility</li>
+          </ul>
+        </div>
+        <div class="subsection">
+          <div class="sub-title">Inflammatory / Infectious</div>
+          <ul class="bullets">
+            <li>See <strong>Colitis</strong> page for full infectious and inflammatory DDx</li>
+            <li>C. diff, GIPP, IBD, microscopic colitis, ischemic colitis</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Acute vs. Chronic Workup</div>
         <span class="acc-tag tag-core">CORE</span>
         <span class="acc-chevron">›</span>
       </div>
@@ -854,25 +1360,25 @@
           <table>
             <thead><tr><th>Feature</th><th>Acute (&lt;4 weeks)</th><th>Chronic (&gt;4 weeks)</th></tr></thead>
             <tbody>
-              <tr><td><strong>Priority DDx</strong></td><td>Infectious (C. diff, ETEC, Salmonella, Shigella), ischemic, medication-induced</td><td>IBD, IBS, malabsorption (celiac, SIBO), microscopic colitis, VIPoma</td></tr>
-              <tr><td><strong>Work-up</strong></td><td>C. diff PCR, stool culture, O&P, GI pathogen panel, CBC, CMP, lactoferrin</td><td>Colonoscopy with biopsy, celiac serologies, stool fat, 72h fecal fat</td></tr>
+              <tr><td><strong>Priority DDx</strong></td><td>Infectious (C. diff, ETEC, Salmonella, Shigella), ischemic, medication-induced</td><td>IBD, IBS, malabsorption (celiac, SIBO, EPI), microscopic colitis, neuroendocrine tumor</td></tr>
+              <tr><td><strong>Work-up</strong></td><td>C. diff PCR, stool culture, O&amp;P, GI pathogen panel, CBC, CMP, CRP/ESR, fecal calprotectin</td><td>Colonoscopy with biopsy, celiac serologies (anti-tTG IgA), fecal elastase (EPI), 72h fecal fat, stool osmotic gap, breath test (SIBO), chromogranin A</td></tr>
             </tbody>
           </table>
         </div>
         <div class="subsection" style="margin-top:14px">
-          <div class="sub-title">Secretory vs. Osmotic Diarrhea</div>
+          <div class="sub-title">Stool Osmotic Gap — 290 − 2×(stool Na + stool K)</div>
           <div class="tbl-wrap">
             <table>
-              <thead><tr><th>Type</th><th>Behavior with Fasting</th><th>Stool Osmotic Gap</th><th>Examples</th></tr></thead>
+              <thead><tr><th>Type</th><th>Behavior with Fasting</th><th>Osmotic Gap</th><th>Examples</th></tr></thead>
               <tbody>
-                <tr><td><strong>Secretory</strong></td><td>Persists with fasting</td><td>&lt;50</td><td>VIPoma, microscopic colitis, bile acid malabsorption</td></tr>
+                <tr><td><strong>Secretory</strong></td><td>Persists with fasting</td><td>&lt;50</td><td>VIPoma, microscopic colitis, bile acid malabsorption, carcinoid</td></tr>
                 <tr><td><strong>Osmotic</strong></td><td>Stops with fasting</td><td>&gt;125</td><td>Lactose intolerance, laxative use, celiac</td></tr>
               </tbody>
             </table>
           </div>
         </div>
         <div class="subsection" style="margin-top:14px">
-          <div class="sub-title">HIV/AIDS Diarrhea — CD4-Based Differential</div>
+          <div class="sub-title">HIV/AIDS — CD4-Based Differential</div>
           <div class="tbl-wrap">
             <table>
               <thead><tr><th>CD4 Count</th><th>Additional Pathogens to Consider</th></tr></thead>
@@ -887,10 +1393,19 @@
       </div>
     </div>
 
-    <div class="accordion">
+  </div>
+
+  <!-- ABDOMINAL PAIN -->
+  <div id="abdpain" class="section">
+    <div class="section-header">
+      <div class="section-title">Abdominal Pain</div>
+      <div class="section-desc">Acute vs. Chronic · Surgical Emergencies · Location-Based DDx</div>
+    </div>
+
+    <div class="accordion open">
       <div class="acc-header" onclick="toggle(this)">
-        <div class="acc-label">Abdominal Pain — Acute vs. Chronic</div>
-        <span class="acc-tag tag-core">CORE</span>
+        <div class="acc-label">Acute Abdominal Pain — DDx by Context</div>
+        <span class="acc-tag tag-emergency">EMERGENCY</span>
         <span class="acc-chevron">›</span>
       </div>
       <div class="acc-body">
@@ -898,9 +1413,9 @@
           <table>
             <thead><tr><th>Context</th><th>Differential</th></tr></thead>
             <tbody>
-              <tr><td><strong>Acute, no prior surgery</strong></td><td>Appendicitis, cholecystitis, perforation (free air), ischemic bowel (lactic acidosis + out-of-proportion pain), obstruction, AAA (do not miss)</td></tr>
+              <tr><td><strong>Acute, no prior surgery</strong></td><td>Appendicitis, cholecystitis, perforation (free air), ischemic bowel, obstruction, pancreatitis, AAA</td></tr>
               <tr><td><strong>Acute, prior surgery</strong></td><td>Adhesion-related SBO, anastomotic leak, internal hernia (post-Roux-en-Y), dumping syndrome</td></tr>
-              <tr><td><strong>Chronic</strong></td><td>IBD, IBS, chronic pancreatitis, PUD, mesenteric ischemia, malignancy</td></tr>
+              <tr><td><strong>Chronic</strong></td><td>IBD, IBS, chronic pancreatitis, PUD, chronic mesenteric ischemia, malignancy, functional</td></tr>
             </tbody>
           </table>
         </div>
@@ -913,7 +1428,40 @@
 
     <div class="accordion">
       <div class="acc-header" onclick="toggle(this)">
-        <div class="acc-label">Dysphagia — Localization Framework</div>
+        <div class="acc-label">Location-Based DDx</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Location</th><th>Top Diagnoses</th></tr></thead>
+            <tbody>
+              <tr><td><strong>RUQ</strong></td><td>Cholecystitis, cholangitis, hepatitis, Fitz-Hugh-Curtis, RLL pneumonia</td></tr>
+              <tr><td><strong>Epigastric</strong></td><td>PUD, pancreatitis, GERD, gastritis, MI (referred)</td></tr>
+              <tr><td><strong>LUQ</strong></td><td>Splenic pathology, gastric, LLL pneumonia, splenic flexure colitis</td></tr>
+              <tr><td><strong>RLQ</strong></td><td>Appendicitis, Crohn's (terminal ileum), ovarian pathology, typhlitis</td></tr>
+              <tr><td><strong>LLQ</strong></td><td>Diverticulitis, sigmoid volvulus, ovarian pathology, IBD</td></tr>
+              <tr><td><strong>Diffuse / periumbilical</strong></td><td>Early appendicitis, SBO, mesenteric ischemia, IBD, IBS, peritonitis</td></tr>
+              <tr><td><strong>Suprapubic / pelvic</strong></td><td>PID, cystitis, ovarian torsion/cyst, uterine pathology, rectal disease</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- DYSPHAGIA -->
+  <div id="dysphagia" class="section">
+    <div class="section-header">
+      <div class="section-title">Dysphagia</div>
+      <div class="section-desc">Oropharyngeal vs. Esophageal · Mechanical vs. Motility · Food Impaction</div>
+    </div>
+
+    <div class="accordion open">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Localization Framework</div>
         <span class="acc-tag tag-core">CORE</span>
         <span class="acc-chevron">›</span>
       </div>
@@ -922,18 +1470,42 @@
           <table>
             <thead><tr><th>Type</th><th>Symptom Pattern</th><th>Mechanism</th><th>Examples</th></tr></thead>
             <tbody>
-              <tr><td><strong>Oropharyngeal (transfer)</strong></td><td>Liquid worse than solid; coughing, aspiration</td><td>Neuromuscular</td><td>Stroke, myasthenia gravis, Parkinson's</td></tr>
-              <tr><td><strong>Esophageal — mechanical</strong></td><td>Progressive: solids first, then liquids</td><td>Structural narrowing</td><td>Stricture, Schatzki ring, esophageal cancer, extrinsic compression</td></tr>
-              <tr><td><strong>Esophageal — motility</strong></td><td>Both solids and liquids from onset</td><td>Dysmotility</td><td>Achalasia, diffuse esophageal spasm, scleroderma</td></tr>
+              <tr><td><strong>Oropharyngeal (transfer)</strong></td><td>Liquid worse than solid; coughing, nasopharyngeal regurgitation, aspiration</td><td>Neuromuscular</td><td>Stroke, myasthenia gravis, Parkinson's, ALS, polymyositis</td></tr>
+              <tr><td><strong>Esophageal — mechanical</strong></td><td>Progressive: solids first, then liquids</td><td>Structural narrowing</td><td>Peptic stricture, Schatzki ring, esophageal cancer, extrinsic compression (lymphadenopathy, vascular)</td></tr>
+              <tr><td><strong>Esophageal — motility</strong></td><td>Both solids and liquids from onset; intermittent</td><td>Dysmotility</td><td>Achalasia, diffuse esophageal spasm, scleroderma, jackhammer esophagus</td></tr>
             </tbody>
           </table>
         </div>
         <div class="alert alert-red" style="margin-top:12px">
           <strong>FOOD IMPACTION — EMERGENCY</strong>
-          Urgent endoscopic removal within 24h. Emergent if complete esophageal obstruction. "Steakhouse syndrome" = meat impaction in Schatzki ring or stricture.
+          Urgent endoscopic removal within 24h. Emergent if complete esophageal obstruction (unable to handle secretions). "Steakhouse syndrome" = meat impaction at Schatzki ring or stricture.
         </div>
       </div>
     </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggle(this)">
+        <div class="acc-label">Achalasia vs. Mechanical Obstruction</div>
+        <span class="acc-tag tag-core">CORE</span>
+        <span class="acc-chevron">›</span>
+      </div>
+      <div class="acc-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Feature</th><th>Achalasia</th><th>Mechanical (stricture / cancer)</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Onset</strong></td><td>Gradual; solids AND liquids</td><td>Progressive; solids → liquids</td></tr>
+              <tr><td><strong>Regurgitation</strong></td><td>Undigested food (hours later)</td><td>Partially digested, soon after eating</td></tr>
+              <tr><td><strong>Weight loss</strong></td><td>Variable</td><td>Common with cancer</td></tr>
+              <tr><td><strong>Imaging</strong></td><td>Bird-beak esophagus on barium swallow; dilated esophagus</td><td>Filling defect or extrinsic compression</td></tr>
+              <tr><td><strong>Manometry</strong></td><td>Absent peristalsis + incomplete LES relaxation</td><td>Normal or secondary changes</td></tr>
+              <tr><td><strong>Treatment</strong></td><td>Pneumatic dilation, POEM, Heller myotomy</td><td>Dilation, stenting, surgical resection</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- CANCER -->
@@ -1265,15 +1837,49 @@
 
 </div>
 
-<div style="text-align:center; padding: 24px; font-family: var(--mono); font-size: 10px; color: var(--text-dim); opacity: 0.5;">updated 2026-03-31 14:48</div>
+<div style="text-align:center; padding: 24px; font-family: var(--mono); font-size: 10px; color: var(--text-dim); opacity: 0.5;">updated 2026-04-06</div>
 
 <script>
+  const sectionGroups = {
+    'gi-bleed': 'acute', 'emergencies': 'acute',
+    'cirrhosis': 'liver', 'biliary': 'liver', 'pancreatitis': 'liver',
+    'ibd': 'inflammatory', 'colitis': 'inflammatory',
+    'nv': 'symptoms', 'diarrhea': 'symptoms', 'abdpain': 'symptoms', 'dysphagia': 'symptoms', 'cancer': 'symptoms',
+    'framework': 'reference'
+  };
+
+  let activeGroup = 'acute';
+
+  function applyGroup(group) {
+    document.querySelectorAll('.nav-group-btn').forEach(b => b.classList.toggle('active', b.dataset.group === group));
+    document.querySelectorAll('.nav-pages').forEach(p => p.classList.remove('active'));
+    document.getElementById('grp-' + group).classList.add('active');
+  }
+
+  function showGroup(group, btn) {
+    activeGroup = group;
+    applyGroup(group);
+  }
+
   function showSection(id, btn) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     btn.classList.add('active');
+    activeGroup = sectionGroups[id] || activeGroup;
+    applyGroup(activeGroup);
+    btn.classList.add('active'); // restore pill highlight after applyGroup
   }
+
+  // Hover preview: show a group's pages on mouseenter, snap back on nav mouseleave
+  document.querySelectorAll('.nav-group-btn').forEach(btn => {
+    btn.addEventListener('mouseenter', () => {
+      document.querySelectorAll('.nav-group-btn').forEach(b => b.classList.toggle('active', b === btn));
+      document.querySelectorAll('.nav-pages').forEach(p => p.classList.remove('active'));
+      document.getElementById('grp-' + btn.dataset.group).classList.add('active');
+    });
+  });
+  document.getElementById('nav').addEventListener('mouseleave', () => applyGroup(activeGroup));
 
   function toggle(header) {
     header.parentElement.classList.toggle('open');
