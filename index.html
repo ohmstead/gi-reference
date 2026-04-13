@@ -338,6 +338,50 @@
   .em-row { display: grid; grid-template-columns: 120px 1fr; gap: 8px; margin-bottom: 4px; font-size: 12px; }
   .em-label { font-family: var(--mono); font-size: 10px; color: var(--text-dim); padding-top: 1px; }
 
+  .checklist { list-style: none; padding: 0; max-width: 480px; }
+  .checklist li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.1s;
+    user-select: none;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li:hover { background: var(--surface2); }
+  .checklist li.checked { color: var(--text-dim); text-decoration: line-through; }
+  .checklist li input[type="checkbox"] { display: none; }
+  .cl-box {
+    width: 16px; height: 16px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--accent3);
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .checklist li.checked .cl-box {
+    background: rgba(57,211,83,0.1);
+    border-color: var(--accent3);
+  }
+  .cl-num {
+    font-family: var(--mono); font-size: 10px;
+    color: var(--text-dim); min-width: 16px;
+  }
+  .checklist li.checked .cl-num { color: var(--border); }
+  .cl-reset {
+    font-family: var(--mono); font-size: 10px;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text-dim); padding: 5px 12px; cursor: pointer;
+    letter-spacing: 0.06em; margin-top: 16px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .cl-reset:hover { color: var(--text); border-color: var(--text-dim); }
+
   .framework {
     border: 1px solid rgba(0,212,255,0.3);
     background: rgba(0,212,255,0.04);
@@ -412,6 +456,7 @@
   <div class="nav-pages" id="grp-reference">
     <button class="nav-pill" onclick="showSection('framework',this)">Rounds Framework</button>
     <button class="nav-pill" onclick="showSection('anemia',this)">Anemia</button>
+    <button class="nav-pill" onclick="showSection('consult-checklist',this)">Consult Checklist</button>
   </div>
 </div>
 
@@ -1962,6 +2007,29 @@
 
   </div>
 
+  <!-- CONSULT CHECKLIST -->
+  <div id="consult-checklist" class="section">
+    <div class="section-header">
+      <div class="section-title">Consult Checklist</div>
+      <div class="section-desc">Chart review before seeing the patient</div>
+    </div>
+    <div style="border: 1px solid var(--border); background: var(--surface);">
+      <ul class="checklist" id="consult-cl">
+        <li onclick="clToggle(this)"><span class="cl-box"></span><span class="cl-num">1</span>Vitals</li>
+        <li onclick="clToggle(this)"><span class="cl-box"></span><span class="cl-num">2</span>I/O — ED fluids?</li>
+        <li onclick="clToggle(this)"><span class="cl-box"></span><span class="cl-num">3</span>Meds</li>
+        <li onclick="clToggle(this)"><span class="cl-box"></span><span class="cl-num">4</span>Labs</li>
+        <li onclick="clToggle(this)"><span class="cl-box"></span><span class="cl-num">5</span>Imaging</li>
+        <li onclick="clToggle(this)"><span class="cl-box"></span><span class="cl-num">6</span>PMH — History tab, Problem List tab, Chart Review</li>
+        <li onclick="clToggle(this)"><span class="cl-box"></span><span class="cl-num">7</span>Call ED back</li>
+        <li onclick="clToggle(this)"><span class="cl-box"></span><span class="cl-num">8</span>Go see pt</li>
+        <li onclick="clToggle(this)"><span class="cl-box"></span><span class="cl-num">9</span>Write note</li>
+        <li onclick="clToggle(this)"><span class="cl-box"></span><span class="cl-num">10</span>Staff</li>
+      </ul>
+    </div>
+    <button class="cl-reset" onclick="clReset()">↺ RESET</button>
+  </div>
+
 </div>
 
 <div style="text-align:center; padding: 24px; font-family: var(--mono); font-size: 10px; color: var(--text-dim); opacity: 0.5;">updated 2026-04-13</div>
@@ -1972,7 +2040,7 @@
     'cirrhosis': 'liver', 'biliary': 'liver', 'pancreatitis': 'liver',
     'ibd': 'inflammatory', 'colitis': 'inflammatory',
     'nv': 'symptoms', 'diarrhea': 'symptoms', 'abdpain': 'symptoms', 'dysphagia': 'symptoms', 'cancer': 'symptoms',
-    'framework': 'reference', 'anemia': 'reference'
+    'framework': 'reference', 'anemia': 'reference', 'consult-checklist': 'reference'
   };
 
   let activeGroup = 'acute';
@@ -2007,6 +2075,17 @@
     });
   });
   document.getElementById('nav').addEventListener('mouseleave', () => applyGroup(activeGroup));
+
+  function clToggle(li) {
+    li.classList.toggle('checked');
+    li.querySelector('.cl-box').textContent = li.classList.contains('checked') ? '✓' : '';
+  }
+  function clReset() {
+    document.querySelectorAll('#consult-cl li').forEach(li => {
+      li.classList.remove('checked');
+      li.querySelector('.cl-box').textContent = '';
+    });
+  }
 
   function toggle(header) {
     header.parentElement.classList.toggle('open');
